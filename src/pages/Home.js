@@ -1,6 +1,6 @@
 import React from 'react';
 import { CATALOG } from '../data/catalog';
-import { Star, ShieldCheck, Zap, ArrowRight, ArrowUpRight } from 'lucide-react';
+import { Star, ShieldCheck, Zap, ArrowRight, ArrowUpRight, Lock, Fingerprint, Eye } from 'lucide-react';
 
 export default function Home() {
   return (
@@ -17,7 +17,7 @@ export default function Home() {
           
           <h1 className="text-6xl md:text-8xl font-black tracking-tighter mb-8 leading-none">
             <span className="text-white">ELITE</span><br/>
-            <span className="gold-gradient bg-clip-text text-transparent italic">PROVISIONS</span>
+            <span className="gold-gradient italic">PROVISIONS</span>
           </h1>
           
           <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed">
@@ -32,6 +32,33 @@ export default function Home() {
             <button className="px-10 py-5 glass text-white font-bold rounded-full border border-white/10 hover:bg-white/5 transition-all">
               CYBER SERVICES
             </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Security-First Pillars */}
+      <section className="max-w-7xl mx-auto px-6 mb-32">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+          <div className="flex flex-col items-center text-center">
+            <div className="w-16 h-16 rounded-3xl glass flex items-center justify-center mb-6 border-[#D4A843]/20 shadow-[0_0_20px_rgba(212,168,67,0.1)]">
+              <Lock className="w-8 h-8 text-[#D4A843]" />
+            </div>
+            <h3 className="text-xl font-bold mb-4 tracking-tight">ENCRYPTED COMMERCE</h3>
+            <p className="text-gray-500 text-sm">Every transaction is handled through end-to-end encrypted tunnels, ensuring your data never hits the public web.</p>
+          </div>
+          <div className="flex flex-col items-center text-center">
+            <div className="w-16 h-16 rounded-3xl glass flex items-center justify-center mb-6 border-[#D4A843]/20 shadow-[0_0_20px_rgba(212,168,67,0.1)]">
+              <Fingerprint className="w-8 h-8 text-[#D4A843]" />
+            </div>
+            <h3 className="text-xl font-bold mb-4 tracking-tight">SQUAD-VETTED ASSETS</h3>
+            <p className="text-gray-500 text-sm">We don't just sell. We verify. Every product in the EIGOO Market has been internally audited for security and quality.</p>
+          </div>
+          <div className="flex flex-col items-center text-center">
+            <div className="w-16 h-16 rounded-3xl glass flex items-center justify-center mb-6 border-[#D4A843]/20 shadow-[0_0_20px_rgba(212,168,67,0.1)]">
+              <Eye className="w-8 h-8 text-[#D4A843]" />
+            </div>
+            <h3 className="text-xl font-bold mb-4 tracking-tight">ZERO-TRUST LOGISTICS</h3>
+            <p className="text-gray-500 text-sm">Total transparency in the supply chain. From the lab to your door, we track every waypoint in real-time.</p>
           </div>
         </div>
       </section>
@@ -108,7 +135,7 @@ export default function Home() {
             <span className="text-gray-500 text-xs font-mono tracking-widest uppercase">Wayfinder Inventory Sync: Online</span>
           </div>
           <div className="text-gray-600 text-xs font-mono uppercase">
-            © 2026 EIGOO Inc // Design v2.04
+            © 2026 EIGOO Inc // Design v2.05
           </div>
         </div>
       </footer>
