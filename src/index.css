@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --gold: #D4A843;
+  --gold-glow: rgba(212, 168, 67, 0.4);
+  --cyber-blue: #00f2ff;
+  --deep-bg: #050505;
+}
+
+body {
+  margin: 0;
+  background-color: var(--deep-bg);
+  color: white;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.gold-gradient {
+  background: linear-gradient(135deg, #D4A843 0%, #F5E0A3 50%, #D4A843 100%);
+}
+
+.cyber-grid {
+  background-image: 
+    linear-gradient(rgba(212, 168, 67, 0.05) 1px, transparent 1px), 
+    linear-gradient(90deg, rgba(212, 168, 67, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.product-card {
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.product-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--gold);
+  box-shadow: 0 10px 40px -10px var(--gold-glow);
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
