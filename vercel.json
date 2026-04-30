@@ -1,0 +1,17 @@
+{
+  "buildCommand": "CI=false craco build",
+  "outputDirectory": "build",
+  "redirects": [
+    { "source": "/go/agent-z-rig", "destination": "https://www.amazon.com/raspberry-pi-5?tag=eigoo0fa-20", "permanent": false },
+    { "source": "/go/proton-vpn", "destination": "https://protonvpn.com/?ref=2798569", "permanent": false },
+    { "source": "/go/vr-link", "destination": "https://www.meta.com/quest/quest-3s/?ref=2798569", "permanent": false },
+    { "source": "/go/recon-drone", "destination": "https://wozed.com/stem/drone", "permanent": false },
+    { "source": "/go/hyperx-cloud-3", "destination": "https://bizboogie.com/", "permanent": false },
+    { "source": "/go/razer-huntsman-v3", "destination": "https://bizboogie.com/", "permanent": false },
+    { "source": "/go/secretlab-titan", "destination": "https://bizboogie.com/", "permanent": false },
+    { "source": "/go/doordash-credits", "destination": "https://www.doordash.com/referral", "permanent": false }
+  ],
+  "rewrites": [
+    { "source": "/:path*", "destination": "/index.html" }
+  ]
+}
