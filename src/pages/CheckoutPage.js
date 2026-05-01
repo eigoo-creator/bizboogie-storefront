@@ -16,6 +16,8 @@ export default function CheckoutPage() {
   const productPrice = parseFloat(params.get('price') || '0');
   const productImage = params.get('image') || '';
   const isPod = params.get('pod') === 'true';
+  const provider = params.get('provider') || 'printify';
+  const isApparel = params.get('apparel') === 'true';
 
   const [form, setForm] = useState({
     first_name: '', last_name: '', email: '', phone: '',
@@ -35,17 +37,45 @@ export default function CheckoutPage() {
         const podApi = (await import('../lib/podApi')).default;
         const result = await podApi.createOrder({
           ...form,
-          line_items: [{ product_id: productId, variant_id: parseInt(variantId), quantity: 1 }],
+          provider,
+          scholarship: scholarshipActive,
+          line_items: [{
+            product_id: productId,
+            variant_id: provider === 'printful' ? parseInt(variantId) : parseInt(variantId),
+            quantity: 1,
+            price: productPrice,
+          }],
         });
-        setOrderResult({ success: true, orderId: result.order_id, scholarship: scholarshipActive });
+        setOrderResult({
+          success: true,
+          orderId: result.order_id,
+          provider: result.provider,
+          scholarship: scholarshipActive,
+          philanthropy: result.philanthropy,
+        });
       } else {
-        setOrderResult({ success: true, orderId: `eigoo-${Date.now()}`, scholarship: scholarshipActive });
+        setOrderResult({
+          success: true,
+          orderId: `eigoo-${Date.now()}`,
+          provider: 'static',
+          scholarship: scholarshipActive,
+        });
       }
     } catch (err) {
       setOrderResult({ success: false, error: err.message || 'Order failed' });
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const providerBadge = () => {
+    if (!isPod) return null;
+    const label = provider === 'printful' ? 'Printful' : 'Printify';
+    return (
+      <span className="inline-block bg-white/5 text-gray-400 text-[10px] font-bold px-2 py-1 rounded-lg uppercase tracking-widest mb-2">
+        Fulfilled by {label}
+      </span>
+    );
   };
 
   if (orderResult?.success) {
@@ -57,12 +87,22 @@ export default function CheckoutPage() {
           </div>
           <h1 className="text-3xl font-black mb-4">Order Confirmed</h1>
           <p className="text-gray-400 mb-2">Order ID: <span className="text-[#D4A843] font-mono">{orderResult.orderId}</span></p>
+          {orderResult.provider && orderResult.provider !== 'static' && (
+            <p className="text-gray-500 text-xs mb-2 uppercase tracking-widest">
+              Fulfilled via {orderResult.provider === 'printful' ? 'Printful' : 'Printify'}
+            </p>
+          )}
           <p className="text-gray-500 text-sm mb-6">Your order has been submitted for fulfillment. You will receive a shipping notification once it ships.</p>
           {orderResult.scholarship && (
-            <div className="flex items-center justify-center gap-2 bg-[#D4A843]/10 border border-[#D4A843]/20 rounded-xl px-5 py-3 mb-8">
+            <div className="flex items-center justify-center gap-2 bg-[#D4A843]/10 border border-[#D4A843]/20 rounded-xl px-5 py-3 mb-4">
               <Heart className="w-4 h-4 text-[#D4A843] fill-[#D4A843]" />
               <span className="text-[#D4A843] text-sm font-bold">You&apos;ve helped fund a CyberKids scholarship!</span>
             </div>
+          )}
+          {orderResult.philanthropy?.amount > 0 && (
+            <p className="text-emerald-400/70 text-xs mb-8">
+              ${orderResult.philanthropy.amount.toFixed(2)} earmarked for {orderResult.philanthropy.beneficiary}
+            </p>
           )}
           <a href="/" className="inline-flex items-center gap-2 px-6 py-3 bg-[#D4A843] text-black font-bold rounded-xl hover:bg-white transition-all">
             <ArrowLeft className="w-4 h-4" /> Back to Market
@@ -145,10 +185,11 @@ export default function CheckoutPage() {
               )}
               <h3 className="font-bold text-white mb-2">{decodeURIComponent(productName)}</h3>
               {isPod && (
-                <span className="inline-block bg-[#D4A843]/10 text-[#D4A843] text-[10px] font-black px-2 py-1 rounded-lg uppercase tracking-widest mb-4">
-                  Print on Demand
+                <span className="inline-block bg-[#D4A843]/10 text-[#D4A843] text-[10px] font-black px-2 py-1 rounded-lg uppercase tracking-widest mb-2">
+                  {isApparel ? 'Apparel' : 'Print on Demand'}
                 </span>
               )}
+              {providerBadge()}
               <div className="border-t border-white/5 pt-4 mt-4 space-y-3">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-500">Subtotal</span>
@@ -158,10 +199,21 @@ export default function CheckoutPage() {
                   <span className="text-gray-500">Shipping</span>
                   <span className="text-gray-400">Calculated at fulfillment</span>
                 </div>
+                {scholarshipActive && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-emerald-400/70 flex items-center gap-1">
+                      <Heart className="w-3 h-3" /> CyberKids Donation
+                    </span>
+                    <span className="text-emerald-400/70">${(productPrice * 0.10).toFixed(2)}</span>
+                  </div>
+                )}
                 <div className="border-t border-white/5 pt-3 flex justify-between">
                   <span className="text-white font-bold">Total</span>
                   <span className="text-2xl font-black text-[#D4A843]">${productPrice.toFixed(2)}</span>
                 </div>
+                {scholarshipActive && (
+                  <p className="text-gray-600 text-[10px] italic">Donation comes from our margin — not added to your total.</p>
+                )}
               </div>
               <div className="mt-6 flex items-center gap-2 text-gray-500 text-xs">
                 <ShieldCheck className="w-4 h-4 text-emerald-500" />
