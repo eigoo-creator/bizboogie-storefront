@@ -1,6 +1,17 @@
 import React from 'react';
 import { ShoppingBag, Shield, Menu, Search } from 'lucide-react';
 
+const scrollToSection = (id) => {
+  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+};
+
+const NAV_ITEMS = [
+  { label: 'Collections', action: () => scrollToSection('catalog-section') },
+  { label: 'Services', href: 'https://cyberops.bizboogie.com/services' },
+  { label: 'Lab', href: 'https://cyberops.bizboogie.com/cyberkids' },
+  { label: 'About', action: () => scrollToSection('about-section') },
+];
+
 export default function Navbar() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-[100] px-6 py-4">
@@ -16,14 +27,30 @@ export default function Navbar() {
               <span className="text-[10px] font-bold tracking-[0.3em] text-[#D4A843] uppercase">Market</span>
             </div>
           </div>
-          
+
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-10">
-            {['Collections', 'Services', 'Lab', 'About'].map((item) => (
-              <a key={item} href="#" className="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-white transition-colors">
-                {item}
-              </a>
-            ))}
+            {NAV_ITEMS.map((item) =>
+              item.href ? (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-white transition-colors"
+                >
+                  {item.label}
+                </a>
+              ) : (
+                <button
+                  key={item.label}
+                  onClick={item.action}
+                  className="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-white transition-colors bg-transparent border-0 p-0 cursor-pointer"
+                >
+                  {item.label}
+                </button>
+              )
+            )}
           </div>
 
           {/* Actions */}

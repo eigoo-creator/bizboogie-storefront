@@ -116,17 +116,23 @@ export default function Home() {
             Vetted by the squad. Built for the seafarers.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <button onClick={() => window.scrollTo({ top: 1200, behavior: 'smooth' })} className="px-10 py-5 bg-[#D4A843] text-black font-black rounded-full hover:scale-105 hover:bg-white transition-all shadow-[0_0_30px_-5px_rgba(212,168,67,0.5)]">
+            <button
+              onClick={() => document.getElementById('catalog-section')?.scrollIntoView({ behavior: 'smooth' })}
+              className="px-10 py-5 bg-[#D4A843] text-black font-black rounded-full hover:scale-105 hover:bg-white transition-all shadow-[0_0_30px_-5px_rgba(212,168,67,0.5)]"
+            >
               BROWSE CATALOG
             </button>
-            <button onClick={() => window.location.href = 'https://cyberops.bizboogie.com/services'} className="px-10 py-5 glass text-white font-bold rounded-full border border-white/10 hover:bg-white/5 transition-all">
+            <button
+              onClick={() => window.location.href = 'https://cyberops.bizboogie.com/services'}
+              className="px-10 py-5 glass text-white font-bold rounded-full border border-white/10 hover:bg-white/5 transition-all"
+            >
               CYBER SERVICES
             </button>
           </div>
         </div>
       </section>
 
-      <section className="max-w-7xl mx-auto px-6 mb-32">
+      <section id="about-section" className="max-w-7xl mx-auto px-6 mb-32">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           <div className="flex flex-col items-center text-center">
             <div className="w-16 h-16 rounded-3xl glass flex items-center justify-center mb-6 border-[#D4A843]/20 shadow-[0_0_20px_rgba(212,168,67,0.1)]"><Lock className="w-8 h-8 text-[#D4A843]" /></div>
@@ -156,7 +162,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="max-w-7xl mx-auto px-6 pb-32">
+      <section id="catalog-section" className="max-w-7xl mx-auto px-6 pb-32">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {filteredProducts.map((product) => (
             <div key={product.id} className="product-card group relative bg-[#0D0D0F] border border-white/5 rounded-[32px] overflow-hidden">
