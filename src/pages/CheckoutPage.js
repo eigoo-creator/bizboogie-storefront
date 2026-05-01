@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShieldCheck, Truck, CreditCard, ArrowLeft } from 'lucide-react';
+import { ShieldCheck, Truck, CreditCard, ArrowLeft, Heart } from 'lucide-react';
 
 const US_STATES = [
   'AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA',
@@ -23,6 +23,7 @@ export default function CheckoutPage() {
   });
   const [submitting, setSubmitting] = useState(false);
   const [orderResult, setOrderResult] = useState(null);
+  const [scholarshipActive, setScholarshipActive] = useState(true);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -36,9 +37,9 @@ export default function CheckoutPage() {
           ...form,
           line_items: [{ product_id: productId, variant_id: parseInt(variantId), quantity: 1 }],
         });
-        setOrderResult({ success: true, orderId: result.order_id });
+        setOrderResult({ success: true, orderId: result.order_id, scholarship: scholarshipActive });
       } else {
-        setOrderResult({ success: true, orderId: `eigoo-${Date.now()}` });
+        setOrderResult({ success: true, orderId: `eigoo-${Date.now()}`, scholarship: scholarshipActive });
       }
     } catch (err) {
       setOrderResult({ success: false, error: err.message || 'Order failed' });
@@ -56,7 +57,13 @@ export default function CheckoutPage() {
           </div>
           <h1 className="text-3xl font-black mb-4">Order Confirmed</h1>
           <p className="text-gray-400 mb-2">Order ID: <span className="text-[#D4A843] font-mono">{orderResult.orderId}</span></p>
-          <p className="text-gray-500 text-sm mb-8">Your order has been submitted for fulfillment. You will receive a shipping notification once it ships.</p>
+          <p className="text-gray-500 text-sm mb-6">Your order has been submitted for fulfillment. You will receive a shipping notification once it ships.</p>
+          {orderResult.scholarship && (
+            <div className="flex items-center justify-center gap-2 bg-[#D4A843]/10 border border-[#D4A843]/20 rounded-xl px-5 py-3 mb-8">
+              <Heart className="w-4 h-4 text-[#D4A843] fill-[#D4A843]" />
+              <span className="text-[#D4A843] text-sm font-bold">You&apos;ve helped fund a CyberKids scholarship!</span>
+            </div>
+          )}
           <a href="/" className="inline-flex items-center gap-2 px-6 py-3 bg-[#D4A843] text-black font-bold rounded-xl hover:bg-white transition-all">
             <ArrowLeft className="w-4 h-4" /> Back to Market
           </a>
@@ -94,6 +101,31 @@ export default function CheckoutPage() {
                 </select>
                 <input name="zip" value={form.zip} onChange={handleChange} required placeholder="ZIP" className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-[#D4A843] focus:outline-none transition-colors" />
               </div>
+              <label className="flex items-start gap-3 cursor-pointer group">
+                <div className="relative mt-0.5 flex-shrink-0">
+                  <input
+                    type="checkbox"
+                    checked={scholarshipActive}
+                    onChange={(e) => setScholarshipActive(e.target.checked)}
+                    className="sr-only"
+                  />
+                  <div className={`w-5 h-5 rounded border transition-all ${scholarshipActive ? 'bg-[#D4A843] border-[#D4A843]' : 'bg-white/5 border-white/20 group-hover:border-[#D4A843]/50'}`}>
+                    {scholarshipActive && (
+                      <svg className="w-3 h-3 text-black absolute top-1 left-1" fill="none" viewBox="0 0 12 12" stroke="currentColor" strokeWidth={2.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M2 6l3 3 5-5" />
+                      </svg>
+                    )}
+                  </div>
+                </div>
+                <div>
+                  <span className="flex items-center gap-1.5 text-sm font-bold text-[#D4A843]">
+                    <Heart className="w-4 h-4 fill-[#D4A843]" /> CyberKids Philanthropy
+                  </span>
+                  <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">
+                    Check this box to donate 10% of this purchase to the CyberKids Academy for neurodivergent and autistic youth development. At no extra cost to you.
+                  </p>
+                </div>
+              </label>
             </div>
             <button type="submit" disabled={submitting} className="w-full py-5 bg-[#D4A843] text-black font-black text-lg rounded-2xl hover:bg-white transition-all shadow-[0_0_30px_-5px_rgba(212,168,67,0.5)] disabled:opacity-50 flex items-center justify-center gap-3">
               <CreditCard className="w-5 h-5" />
