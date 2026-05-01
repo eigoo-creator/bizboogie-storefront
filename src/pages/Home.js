@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { CATALOG } from '../data/catalog';
-import { ShieldCheck, Zap, ArrowUpRight, Lock, Fingerprint, Eye, ShoppingCart } from 'lucide-react';
+import { ShieldCheck, Zap, ArrowUpRight, Lock, Fingerprint, Eye, ShoppingCart, Shirt } from 'lucide-react';
 
 export default function Home() {
   const [podProducts, setPodProducts] = useState([]);
   const [activeCategory, setActiveCategory] = useState('All Collections');
+  const [podStatus, setPodStatus] = useState('loading');
+  const [activeProviders, setActiveProviders] = useState([]);
 
   useEffect(() => {
     const fetchPod = async () => {
@@ -12,8 +14,11 @@ export default function Home() {
         const podApi = (await import('../lib/podApi')).default;
         const data = await podApi.getProducts();
         setPodProducts(data.products || []);
+        setActiveProviders(data.providers_active || []);
+        setPodStatus('connected');
       } catch (err) {
         console.warn('POD products unavailable, using static catalog:', err.message);
+        setPodStatus('offline');
       }
     };
     fetchPod();
@@ -23,24 +28,30 @@ export default function Home() {
     ...CATALOG.map(p => ({
       ...p,
       is_pod: !!p.isPod,
+      is_apparel: false,
       min_price: p.price,
       max_price: p.price,
       image: p.image,
       variants: [],
+      provider: 'static',
+      philanthropy_eligible: false,
     })),
     ...podProducts.map(p => ({
       id: p.id,
       name: p.title,
       description: p.description,
-      category: 'Print on Demand',
+      category: p.category || 'Print on Demand',
       image: p.image,
       price: p.min_price,
       min_price: p.min_price,
       max_price: p.max_price,
       is_pod: true,
       isPod: true,
+      is_apparel: p.is_apparel || false,
       variants: p.variants || [],
       route: null,
+      provider: p.provider || 'printify',
+      philanthropy_eligible: p.philanthropy_eligible !== false,
     })),
   ];
 
@@ -63,6 +74,8 @@ export default function Home() {
         price: price.toString(),
         image: encodeURIComponent(product.image || ''),
         pod: 'true',
+        provider: product.provider || 'printify',
+        apparel: product.is_apparel ? 'true' : 'false',
       });
       window.location.href = `/checkout?${qs.toString()}`;
     } else {
@@ -72,9 +85,17 @@ export default function Home() {
         price: (product.price || 0).toString(),
         image: encodeURIComponent(product.image || ''),
         pod: 'false',
+        provider: 'static',
+        apparel: 'false',
       });
       window.location.href = `/checkout?${qs.toString()}`;
     }
+  };
+
+  const providerLabel = (p) => {
+    if (p === 'printful') return 'Printful';
+    if (p === 'printify') return 'Printify';
+    return null;
   };
 
   return (
@@ -145,7 +166,18 @@ export default function Home() {
                   <span className="glass px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest text-white">{product.category}</span>
                   {product.is_pod && (
                     <span className="bg-[#D4A843] text-black px-2 py-1 rounded-lg text-[9px] font-black flex items-center gap-1">
-                      <ShieldCheck className="w-3 h-3" /> POD
+                      {product.is_apparel ? <Shirt className="w-3 h-3" /> : <ShieldCheck className="w-3 h-3" />}
+                      {product.is_apparel ? 'APPAREL' : 'POD'}
+                    </span>
+                  )}
+                  {product.is_pod && providerLabel(product.provider) && (
+                    <span className="bg-white/10 text-white/70 px-2 py-0.5 rounded-lg text-[8px] font-bold uppercase tracking-wider backdrop-blur-sm">
+                      via {providerLabel(product.provider)}
+                    </span>
+                  )}
+                  {product.philanthropy_eligible && (
+                    <span className="bg-emerald-500/80 text-white px-2 py-1 rounded-lg text-[9px] font-black">
+                      GIVES BACK
                     </span>
                   )}
                 </div>
@@ -181,8 +213,15 @@ export default function Home() {
       <footer className="max-w-7xl mx-auto px-6 py-12 border-t border-white/5">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-4">
-            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-            <span className="text-gray-500 text-xs font-mono tracking-widest uppercase">Wayfinder Inventory Sync: Online</span>
+            <div className={`w-2 h-2 rounded-full ${podStatus === 'connected' ? 'bg-green-500' : podStatus === 'loading' ? 'bg-yellow-500' : 'bg-red-500'} animate-pulse`} />
+            <span className="text-gray-500 text-xs font-mono tracking-widest uppercase">
+              {podStatus === 'connected'
+                ? `Apparel Bridge: ${activeProviders.length} Provider${activeProviders.length !== 1 ? 's' : ''} Online`
+                : podStatus === 'loading'
+                  ? 'Syncing Providers...'
+                  : 'Apparel Bridge: Offline'
+              }
+            </span>
           </div>
           <div className="text-gray-600 text-xs font-mono uppercase">
             © 2026 EIGOO Inc // Design v2.06
